@@ -19,6 +19,16 @@ final fetchUserProvider = FutureProvider((ref) {
   return http.get(Uri.parse(url)).then((value) => User.fromJson(value.body));
 });
 
+final streamProvider = StreamProvider((ref) async* {
+  // Firebase exple
+  // return FirebaseFirestore.collection('users').doc(userId).snapshots();
+  List<int> values = [];
+  for (var i = 0; i < 20; i++) {
+    values.add(i);
+  }
+  yield values;
+});
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
