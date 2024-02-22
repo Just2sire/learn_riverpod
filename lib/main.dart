@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_learn/home_screen.dart';
+import 'package:http/http.dart' as http;
 import 'package:riverpod_learn/user.dart';
-
-// StateProvider
-// final nameProvider = StateProvider<String?>((ref) => null);
 
 void main() {
   runApp(
@@ -14,22 +12,12 @@ void main() {
   );
 }
 
-// StateNotifierProvider
-final userProvider = StateNotifierProvider<UserNotifier, User>(
-  (ref) => UserNotifier(
-    User(
-      name: "",
-      age: 30,
-    ),
-  ),
-);
-
-// ChangeNotifierProvider
-final userChangeNotifier =
-    ChangeNotifierProvider((ref) => UserChangeNotifier());
-    
 // FutureProvider
+final fetchUserProvider = FutureProvider((ref) {
+  String url = "https://jsonplaceholder.typicode.com/users";
 
+  return http.get(Uri.parse(url)).then((value) => User.fromJson(value.body));
+});
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -39,11 +27,6 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
-      // home: Scaffold(
-      //   body: Center(
-      //     child: Text('Hello World!'),
-      //   ),
-      // ),
     );
   }
 }
