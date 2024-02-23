@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 class User {
   final String name;
@@ -69,7 +70,7 @@ class UserNotifier extends StateNotifier<User> {
 // ChangeNotifier
 class UserChangeNotifier extends ChangeNotifier {
   User user = User(name: "", age: 0);
-  
+
   void updateName(String name) {
     user = user.copyWith(name: name);
     notifyListeners();
@@ -78,5 +79,15 @@ class UserChangeNotifier extends ChangeNotifier {
   void updateAge(int age) {
     user = user.copyWith(age: age);
     notifyListeners();
+  }
+}
+
+final userRepositoryProvider = Provider((ref) => UserRepository());
+
+class UserRepository {
+  Future<User> fetchUserData(String input) {
+    String url = "https://jsonplaceholder.typicode.com/users/$input";
+
+    return http.get(Uri.parse(url)).then((value) => User.fromJson(value.body));
   }
 }

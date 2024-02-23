@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_learn/home_screen.dart';
-import 'package:http/http.dart' as http;
 import 'package:riverpod_learn/user.dart';
 
 void main() {
@@ -13,10 +12,15 @@ void main() {
 }
 
 // FutureProvider
-final fetchUserProvider = FutureProvider((ref) {
-  String url = "https://jsonplaceholder.typicode.com/users";
 
-  return http.get(Uri.parse(url)).then((value) => User.fromJson(value.body));
+
+// Family keyword help us to pass parameters
+
+// autoDispose helps to dispose provider when not in use to avoid memory leaks
+
+final fetchUserProvider = FutureProvider.family.autoDispose((ref, String input) {
+  final userRepository = ref.watch(userRepositoryProvider);
+  return userRepository.fetchUserData(input);
 });
 
 final streamProvider = StreamProvider((ref) async* {
