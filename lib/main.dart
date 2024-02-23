@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_learn/home_screen.dart';
+import 'package:riverpod_learn/logger_riverpod.dart';
 import 'package:riverpod_learn/user.dart';
 
 void main() {
   runApp(
-    const ProviderScope(
-      child: MainApp(),
+    ProviderScope(
+      observers: [LoggerRiverpod(),],
+      child: const MainApp(),
     ),
   );
 }
 
 // FutureProvider
 
-
 // Family keyword help us to pass parameters
 
 // autoDispose helps to dispose provider when not in use to avoid memory leaks
 
-final fetchUserProvider = FutureProvider.family.autoDispose((ref, String input) {
+final fetchUserProvider =
+    FutureProvider.family.autoDispose((ref, String input) {
+  ref.keepAlive(); // Help to keep the state when diving to another page //Only work when we have autoDispose
+  ref.onDispose(() {}); // Handle the dispose action and give us the chance to do something before it
+  ref.onCancel(() {});
+  ref.onResume(() {});
   final userRepository = ref.watch(userRepositoryProvider);
   return userRepository.fetchUserData(input);
 });
